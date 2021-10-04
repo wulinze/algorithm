@@ -46,6 +46,16 @@
         "numeric": "cpp",
         "ranges": "cpp",
         "regex": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "bit": "cpp",
+        "chrono": "cpp",
+        "cinttypes": "cpp",
+        "concepts": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "random": "cpp",
+        "ratio": "cpp"
     }
 }

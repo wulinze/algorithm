@@ -6,32 +6,38 @@
 using std::shared_ptr;
 
 namespace algorithm::tree{
-    template<typename _Tp>
-    class bs_tree: public tree<_Tp>{
+    template<typename _Tp, typename _Np = tnode<_Tp>>
+    class bs_tree: public tree<_Tp, _Np>{
     public:
         bs_tree() = default;
-        void insert(const _Tp& val);
-        shared_ptr<Node<_Tp>> find(const _Tp& val);
+        virtual ~bs_tree() = default;
+
+        virtual void insert(const _Tp& val);
+        virtual void remove(const _Tp& val);
+        virtual shared_ptr<_Np> find(const _Tp& val);
     };
 
-    template<typename _Tp>
-    void bs_tree<_Tp>::insert(const _Tp& val){
-        if(!this->root){this->root = make_shared<Node<_Tp>>(val);return;}
+    template<typename _Tp, typename _Np>
+    void bs_tree<_Tp, _Np>::insert(const _Tp& val){
+        if(!this->root){this->root = make_shared<_Np>(val);return;}
         auto p = this->root;
 
         while(p){
             if(p->val > val){
-                if(!p->left){p->left=make_shared<Node<_Tp>>(val);break;}
+                if(!p->left){p->left=make_shared<_Np>(val);break;}
                 p = p->left;
             } else{
-                if(!p->right){p->right=make_shared<Node<_Tp>>(val);break;}
+                if(!p->right){p->right=make_shared<_Np>(val);break;}
                 p = p->right;
             }
         }
     }
 
-    template<typename _Tp>
-    shared_ptr<Node<_Tp>> bs_tree<_Tp>::find(const _Tp& val){
+    template<typename _Tp, typename _Np>
+    void bs_tree<_Tp, _Np>::remove(const _Tp& val){}
+
+    template<typename _Tp, typename _Np>
+    shared_ptr<_Np> bs_tree<_Tp, _Np>::find(const _Tp& val){
         auto p = this->root;
 
         while(p){

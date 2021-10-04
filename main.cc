@@ -1,6 +1,8 @@
 #include "tree/binary_tree.hpp"
 #include "heap/heap.hpp"
 #include "tree/binary_search_tree.hpp"
+#include "delist/delist.hpp"
+#include "tree/rbtree.hpp"
 
 void test_binary_tree(){
     vector<int> seq;
@@ -56,10 +58,7 @@ void test_heap(){
     std::cout << std::endl;
 }
 
-
-int main(){
-    // test_binary_tree();
-    // test_heap();
+void test_binary_search_tree(){
     algorithm::tree::bs_tree<int> bst;
 
     vector<int> seq;
@@ -76,6 +75,52 @@ int main(){
         std::cout << num << ' ';
     }
     std::cout << std::endl;
+}
+
+void test_delist(){
+    algorithm::delist::delist<int> l1, l2;
+
+    for(int i=0; i<10; i++){
+        l1.emplace_back(i);
+        // l2.emplace(i);
+        // if(i % 3 == 0){
+        //     // l2.pop();
+        //     l1.pop();
+        // }
+    }
+
+    l1.tranverse();
+    // l1.reverse_tranverse();
+    // l2.tranverse();
+    // l2.reverse_tranverse();
+}
+
+void test_rb_tree(){
+    std::default_random_engine e;
+    std::uniform_int_distribution<int> u(0, 1000);
+    algorithm::tree::rb_tree<int> rbTree;
+
+    for(int i=0; i<10; i++){
+        int num = u(e) % 30;
+        std::cout << num << std::endl;
+        rbTree.insert(num);
+    }
+    std::cout << std::endl;
+
+    // auto seq = rbTree.inOrder();
+
+    // for(auto&& num : seq){
+    //     std::cout << num << ' ';
+    // }
+    // std::cout << std::endl;
+}
+
+int main(){
+    // test_binary_tree();
+    // test_heap();
+    // test_binary_search_tree();
+    // test_delist();
+    test_rb_tree();
 
     return 0;
 }

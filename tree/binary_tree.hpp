@@ -19,32 +19,33 @@ using std::pair;
 
 namespace algorithm::tree{
     template<typename T>
-    struct Node{
+    struct tnode{
         T val;
 
-        shared_ptr<Node<T>> left, right;
+        shared_ptr<tnode<T>> left, right;
 
-        Node(const T& val): val(val), left(nullptr), right(nullptr){}
-        Node() = default;
+        explicit tnode(const T& val): val(val), left(nullptr), right(nullptr){}
+
+        tnode() = default;
     };
 
-    template<typename T>
+    template<typename T, typename _Np = tnode<T>>
     class tree{
     protected:
-        shared_ptr<Node<T>> root;
+        shared_ptr<_Np> root;
     public:
         tree(const vector<T>& seq){
             int n = seq.size();
             if(seq.empty())return;
 
-            std::function<void(int, shared_ptr<Node<T>>&)> dfs = 
+            std::function<void(int, shared_ptr<tnode<T>>&)> dfs = 
             [&](int index, 
-                shared_ptr<Node<T>>& node){
+                shared_ptr<tnode<T>>& node){
                 if(index >= n)return;
                 int left = index *2 + 1;
                 int right = index *2 + 2;
                 
-                node = make_shared<Node<T>>(seq[index]);
+                node = make_shared<tnode<T>>(seq[index]);
                 dfs(left, node->left);dfs(right, node->right);
             };
             
@@ -57,10 +58,12 @@ namespace algorithm::tree{
         vector<T> inOrder();
         vector<T> postOrder();
         vector<T> levelOrder();
+
+        virtual ~tree() = default;
     };
-    template<typename T>
-    vector<T> tree<T>::preOrder(){
-        stack<shared_ptr<Node<T>>> s;
+    template<typename T, typename _Np>
+    vector<T> tree<T, _Np>::preOrder(){
+        stack<shared_ptr<_Np>> s;
         vector<T> seq;
         auto p = this->root;
 
@@ -78,9 +81,9 @@ namespace algorithm::tree{
         return seq;
     }
 
-    template<typename T>
-    vector<T> tree<T>::inOrder(){
-        stack<shared_ptr<Node<T>>> s;
+    template<typename T, typename _Np>
+    vector<T> tree<T, _Np>::inOrder(){
+        stack<shared_ptr<_Np>> s;
         vector<T> seq;
         auto p = this->root;
 
@@ -98,9 +101,9 @@ namespace algorithm::tree{
         return seq;
     }
 
-    template<typename T>
-    vector<T> tree<T>::postOrder(){
-        stack<pair<shared_ptr<Node<T>>, bool>> s;
+    template<typename T, typename _Np>
+    vector<T> tree<T, _Np>::postOrder(){
+        stack<pair<shared_ptr<_Np>, bool>> s;
         vector<T> seq;
         auto p = this->root;
 
@@ -124,10 +127,10 @@ namespace algorithm::tree{
         return seq;
     }
 
-    template<typename T>
-    vector<T> tree<T>::levelOrder(){
+    template<typename T, typename _Np>
+    vector<T> tree<T, _Np>::levelOrder(){
         if(!this->root)return {};
-        queue<shared_ptr<Node<T>>> q;
+        queue<shared_ptr<_Np>> q;
         q.push(this->root);
         vector<T> seq;
 
