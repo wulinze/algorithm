@@ -96,7 +96,7 @@ void test_delist(){
 }
 
 void test_rb_tree(){
-    std::default_random_engine e;
+    std::default_random_engine e(time(0));
     std::uniform_int_distribution<int> u(0, 1000);
     algorithm::tree::rb_tree<int> rbTree;
 
