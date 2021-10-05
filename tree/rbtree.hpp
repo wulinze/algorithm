@@ -43,16 +43,17 @@ namespace algorithm::tree{
         void insert_fix(shared_ptr<_Np>& cur){
             function<shared_ptr<_Np> (shared_ptr<_Np>& node)> uncleNode = [](shared_ptr<_Np>& cur){
                 auto parent = cur->parent;
-                
+
                 if(parent == cur->parent->parent->left){
                     return cur->parent->parent->right;
                 } else if(parent == cur->parent->parent->right){
                     return cur->parent->parent->left;
                 } else {
-                    return shared_ptr<_Np>(nullptr);
+                    throw std::runtime_error("Wrong RED_BLACK tree structure");
                 }
             };
 
+            if(cur == this->root)return;
             while(cur->parent->color == Color::RED){
                 auto uncle = uncleNode(cur);
                 auto parent = cur->parent;
@@ -61,23 +62,35 @@ namespace algorithm::tree{
                 if(uncle->color == Color::RED){
                     uncle->color = Color::BLACK;
                     parent->color = Color::BLACK;
-                    grandParent->color = Color::RED;
+                    if(grandParent != this->root){
+                        grandParent->color = Color::RED;
+                        cur = grandParent;
+                    }
+                    else return;
 
-                    cur = grandParent;
                 } else if(uncle->color == Color::BLACK){
                     if(cur == parent->right){
-                        cur = parent;
-                        this->left_rotate(cur);
-                    } else if(cur == parent->left){
-                        parent->color = Color::BLACK;
+                        if(parent == grandParent->right){
+                            parent->color = Color::BLACK;
 
-                        grandParent->color = Color::RED;
-                        if(parent == grandParent->left){
-                            this->right_rotate(grandParent);
-                        } else if(parent == grandParent->right){
+                            grandParent->color = Color::RED;
                             this->left_rotate(grandParent);
+                            return;
+                        } else if(parent == grandParent->left){
+                            cur = parent;
+                            this->left_rotate(cur);
                         }
-                        return;
+                    } else if(cur == parent->left){
+                        if(parent == grandParent->left){
+                            parent->color = Color::BLACK;
+
+                            grandParent->color = Color::RED;
+                            this->right_rotate(grandParent);
+                            return;
+                        } else if(parent == grandParent->right){
+                            cur = parent;
+                            this->right_rotate(cur);
+                        }
                     } else {
                         throw std::runtime_error("inner error");
                     }
@@ -86,15 +99,18 @@ namespace algorithm::tree{
                 }
             }
         }
-    public:
+
         void left_rotate(shared_ptr<_Np>& cur){
-            auto& parent = cur->parent;
-            auto& t = cur->right;
+            auto parent = cur->parent;
+            auto t = cur->right;
 
             if(!parent){
                 cur->right = t->left;
+                cur->right->parent = cur;
                 t->left = cur;
+                t->left->parent = t;
                 this->root = t;
+                this->root->parent = nullptr;
                 return;
             }
             if(cur == parent->left){
@@ -104,8 +120,11 @@ namespace algorithm::tree{
             } else {
                 throw std::runtime_error("cur is not a child of parent");
             }
-            cur->right = cur->right->left;
+            t->parent = parent;
+            cur->right = t->left;
+            cur->right->parent = cur;
             t->left = cur;
+            t->left->parent = t;
         }
         void right_rotate(shared_ptr<_Np>& cur){
             auto parent = cur->parent;
@@ -113,8 +132,11 @@ namespace algorithm::tree{
 
             if(!parent){
                 cur->left = t->right;
+                cur->left->parent = cur;
                 t->right = cur;
+                t->right->parent = t;
                 this->root = t;
+                this->root->parent = nullptr;
                 return;
             }
             if(cur == parent->left){
@@ -124,10 +146,13 @@ namespace algorithm::tree{
             } else {
                 throw std::runtime_error("cur is not a child of parent");
             }
-            cur->left = cur->left->right;
+            t->parent = parent;
+            cur->left = t->right;
+            cur->left->parent = cur;
             t->right = cur;
+            t->right->parent = t;
         }
-
+    public:
         void insert(const _Tp& val) override{
             shared_ptr<_Np> newnode = make_shared<_Np>(val, Color::RED, nil, nil);
             if(!this->root){this->root = make_shared<_Np>(val, Color::BLACK, nil, nil);return;}
@@ -152,14 +177,7 @@ namespace algorithm::tree{
                     p = p->right;
                 }
             }
-
             this->insert_fix(p);
-            std::cout << '*' << endl;
-            auto seq = this->inOrder();
-            for(auto&& num : seq){
-                std::cout << num << endl;
-            }
-            std::cout << std::endl;
         }
         void remove(const _Tp& val) override{
 

@@ -100,19 +100,19 @@ void test_rb_tree(){
     std::uniform_int_distribution<int> u(0, 1000);
     algorithm::tree::rb_tree<int> rbTree;
 
-    for(int i=0; i<10; i++){
+    for(int i=0; i<100; i++){
         int num = u(e) % 30;
-        std::cout << num << std::endl;
+        std::cout << num << ' ';
         rbTree.insert(num);
     }
     std::cout << std::endl;
 
-    // auto seq = rbTree.inOrder();
+    auto seq = rbTree.inOrder();
 
-    // for(auto&& num : seq){
-    //     std::cout << num << ' ';
-    // }
-    // std::cout << std::endl;
+    for(auto&& num : seq){
+        std::cout << num << ' ';
+    }
+    std::cout << std::endl;
 }
 
 int main(){
