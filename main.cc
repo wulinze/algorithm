@@ -110,7 +110,8 @@ void test_rb_tree(){
     auto seq = rbTree.inOrder();
 
     for(auto&& num : seq){
-        std::cout << num << ' ';
+        if(num != -1)
+            std::cout << num << ' ';
     }
     std::cout << std::endl;
 }

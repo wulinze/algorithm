@@ -51,6 +51,8 @@ namespace algorithm::tree{
             }
         }
 
+        auto node = p;
+
         if(node->left && node->right){
             auto parent = node;
             auto p = node->right;
