@@ -3,6 +3,8 @@
 #include "tree/binary_search_tree.hpp"
 #include "delist/delist.hpp"
 #include "tree/rbtree.hpp"
+// #include "tree/btree.hpp"
+#include "tree/trie.hpp"
 
 void test_binary_tree(){
     vector<int> seq;
@@ -116,12 +118,70 @@ void test_rb_tree(){
     std::cout << std::endl;
 }
 
+// void test_b_tree(){
+
+// }
+
+void test_trie(){
+    vector<string> seq;
+    std::default_random_engine e(time(0));
+    std::uniform_int_distribution<int> u(0, 25);
+    algorithm::tree::trie t;
+
+    for(int i=0; i<5; i++){
+        string word;
+
+        for(int j=0; j<u(e)+1; j++){
+            word.push_back('a' + u(e));
+        }
+        cout << word << endl;
+        t.insert(word);
+        seq.push_back(word);
+    }
+    for(int j=0; j<5; j++){
+        string word;
+        for(int j=0; j<u(e)+1; j++){
+            word.push_back('a' + u(e));
+        }
+        seq.push_back(word);
+    }
+
+    for(auto&& word : seq){
+        if(t.find(word)){
+            cout << "found" << endl;
+        } else {
+            cout << "not found" << endl;
+        }
+    }
+
+    for(auto&& word : seq){
+        if(word.length() > 6){
+            auto res = t.remove(word);
+            if(res){
+                cout << "remove successful" << endl;
+            } else {
+                cout << "remove failed" << endl;
+            }
+        }
+    }
+
+    for(auto&& word : seq){
+        if(t.find(word)){
+            cout << "found" << endl;
+        } else {
+            cout << "not found" << endl;
+        }
+    }
+}
+
 int main(){
     // test_binary_tree();
     // test_heap();
     // test_binary_search_tree();
     // test_delist();
-    test_rb_tree();
+    // test_rb_tree();
+    // test_b_tree();
+    test_trie();
 
     return 0;
 }

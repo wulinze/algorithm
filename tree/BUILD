@@ -20,3 +20,13 @@ cc_library(
     name = "rbtree",
     srcs = ["rbtree.hpp"],
 )
+
+cc_library(
+    name = "btree",
+    srcs = ["btree.hpp"],
+)
+
+cc_library(
+    name = "trie",
+    srcs = ["trie.hpp"],
+)

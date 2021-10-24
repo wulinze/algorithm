@@ -9,6 +9,7 @@
 using std::string;
 using std::vector;
 using std::max;
+using std::lower_bound;
 
 namespace algorithm::dp{
     class dp{
@@ -31,7 +32,20 @@ namespace algorithm::dp{
             return dp[l1][l2];
         }
     
-        static int lis();
+        static int lis(const vector<int>& nums){
+            vector<int> d;
+
+            for(auto&& num : nums){
+                auto iter = lower_bound(d.begin(), d.end(), num);
+                if(iter != d.end()){
+                    *iter = num;
+                } else {
+                    d.emplace_back(num);
+                }
+            }
+
+            return d.size();
+        }
 
         static int complete_bag_dp();
     };
