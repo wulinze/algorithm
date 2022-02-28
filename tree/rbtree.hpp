@@ -31,7 +31,7 @@ namespace algorithm::tree{
         explicit rb_node(const _Tp& val, Color c = Color::RED,
             shared_ptr<rb_node<_Tp>> left=nullptr, 
             shared_ptr<rb_node<_Tp>> right=nullptr)
-            : val(val), color(c), left(left), right(right), parent(nullptr){
+            : val(val), color(c), parent(nullptr), left(left), right(right){
         }
     };
 

@@ -18,7 +18,7 @@ namespace algorithm::tree{
 
         string val;
 
-        trieNode(shared_ptr<trieNode> parent = nullptr): children(26, nullptr), parent(parent){}
+        trieNode(shared_ptr<trieNode> parent = nullptr): parent(parent), children(26, nullptr){}
     };
 
     class trie{

@@ -3,7 +3,7 @@
 #include "tree/binary_search_tree.hpp"
 #include "delist/delist.hpp"
 #include "tree/rbtree.hpp"
-// #include "tree/btree.hpp"
+#include "tree/btree.hpp"
 #include "tree/trie.hpp"
 #include "algorithm/math.hpp"
 
@@ -119,9 +119,36 @@ void test_rb_tree(){
     std::cout << std::endl;
 }
 
-// void test_b_tree(){
+void test_b_tree(){
+    using namespace algorithm::tree;
+    b_tree<int, int> tree(3);
+    std::cout << "insert testing" << std::endl;
+    tree.insert(1, 1);
+    tree.insert(2, 2);
+    tree.insert(3, 3);
+    tree.insert(4, 4);
+    std::cout << "insert test pass" << std::endl;
+    
+    std::cout << "tranverse testing" << endl;
+    tree.level_tranverse();
+    std::cout << "tranverse test pass" << endl;
 
-// }
+
+    std::cout << "find testing" << endl;
+    const int times = 4;
+    for(int i=1; i<=times; i++){
+        cout << "keys: "  << i << ", vals:" << tree.find(i) << endl;
+    }
+    std::cout << "find test pass" << endl;
+
+    tree.remove(1);
+    tree.remove(3);
+    std::cout << "find testing" << endl;
+    for(int i=1; i<=times; i++){
+        cout << "keys: "  << i << ", vals:" << tree.find(i) << endl;
+    }
+    std::cout << "find test pass" << endl;
+}
 
 void test_trie(){
     vector<string> seq;
@@ -193,7 +220,8 @@ int main(){
     // test_rb_tree();
     // test_b_tree();
     // test_trie();
-    test_math();
+    // test_math();
+    test_b_tree();
 
     return 0;
 }
