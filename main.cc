@@ -5,6 +5,7 @@
 #include "tree/rbtree.hpp"
 // #include "tree/btree.hpp"
 #include "tree/trie.hpp"
+#include "algorithm/math.hpp"
 
 void test_binary_tree(){
     vector<int> seq;
@@ -174,6 +175,16 @@ void test_trie(){
     }
 }
 
+void test_math(){
+    using namespace algorithm::math;
+    srand(time(0));
+    int base = rand() % 100;
+    int pow = rand() % 20, times = rand() % 300;
+
+    cout << base << ',' << pow << ',' << fastPow(base, pow) << endl;
+    cout << base << ',' << times << ',' << fastMul(base, times) << endl;
+}
+
 int main(){
     // test_binary_tree();
     // test_heap();
@@ -181,7 +192,8 @@ int main(){
     // test_delist();
     // test_rb_tree();
     // test_b_tree();
-    test_trie();
+    // test_trie();
+    test_math();
 
     return 0;
 }

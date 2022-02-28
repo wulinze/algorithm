@@ -9,5 +9,6 @@ cc_binary(
         "//tree:btree",
         "//heap:heap",
         "//delist:delist",
+        "//algorithm:math",
     ],
 )

@@ -11,9 +11,11 @@ using std::string;
 using std::cout;
 using std::endl;
 
+typedef long long ll;
+
 namespace algorithm::distribute{
     enum class Identity{
-        LEADER, FOLLOWER, CANDIDATE 
+        LEADER, FOLLOWER, CANDIDATE
     };
     struct NodeState{
         Identity node_identity;
@@ -21,17 +23,11 @@ namespace algorithm::distribute{
 
     };
 
-    class Client{
-    private:
+    struct ServerNode{
+        NodeState state;
+        ll waitTime;
+
         
-    public:
-
     };
 
-    class Server{
-    private:
-        NodeState node_state;
-
-    public:
-    };
 }
