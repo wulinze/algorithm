@@ -6,6 +6,7 @@
 #include "tree/btree.hpp"
 #include "tree/trie.hpp"
 #include "algorithm/math.hpp"
+#include "ptr/shared_ptr.hpp"
 
 void test_binary_tree(){
     vector<int> seq;
@@ -212,6 +213,17 @@ void test_math(){
     cout << base << ',' << times << ',' << fastMul(base, times) << endl;
 }
 
+void test_shared_ptr(){
+    int* ptr = new int(1);
+    algorithm::ptr::sharedPtr<int> a(ptr);
+
+    std::cout << a << std::endl;
+
+    algorithm::ptr::sharedPtr<int> b = a;
+
+    std::cout << a << std::endl;
+}
+
 int main(){
     // test_binary_tree();
     // test_heap();
@@ -221,7 +233,8 @@ int main(){
     // test_b_tree();
     // test_trie();
     // test_math();
-    test_b_tree();
+    // test_b_tree();
+    test_shared_ptr();
 
     return 0;
 }

@@ -10,5 +10,6 @@ cc_binary(
         "//heap:heap",
         "//delist:delist",
         "//algorithm:math",
+        "//ptr:shared_ptr",
     ],
 )

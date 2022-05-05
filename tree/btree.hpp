@@ -33,7 +33,7 @@ namespace algorithm::tree{
 
         shared_ptr<btree_node<_Kp, _Vp>> brother(){
             long unsigned int i=0;
-            if(paretn == nullptr || parent.keys.size() <= 1)return nullptr;
+            if(parent == nullptr || parent->keys.size() <= 1)return nullptr;
             for(; i<parent->keys.size(); i++){
                 cout << this->keys[0] << ',' << parent->keys[i] << endl;
                 if(this->keys[0] < parent->keys[i]){
