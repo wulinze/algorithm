@@ -125,9 +125,9 @@ void test_b_tree(){
     b_tree<int, int> tree(3);
     std::cout << "insert testing" << std::endl;
     tree.insert(1, 1);
-    tree.insert(2, 2);
-    tree.insert(3, 3);
-    tree.insert(4, 4);
+    // tree.insert(2, 2);
+    // tree.insert(3, 3);
+    // tree.insert(4, 4);
     std::cout << "insert test pass" << std::endl;
     
     std::cout << "tranverse testing" << endl;
@@ -143,12 +143,15 @@ void test_b_tree(){
     std::cout << "find test pass" << endl;
 
     tree.remove(1);
+    cout << "remove 1 success" << endl;
+    // tree.level_tranverse();
     tree.remove(3);
-    std::cout << "find testing" << endl;
+    cout << "remove 3 success" << endl;tree.level_tranverse();
+    std::cout << "remove testing" << endl;
     for(int i=1; i<=times; i++){
         cout << "keys: "  << i << ", vals:" << tree.find(i) << endl;
     }
-    std::cout << "find test pass" << endl;
+    std::cout << "remove test pass" << endl;
 }
 
 void test_trie(){
@@ -233,8 +236,8 @@ int main(){
     // test_b_tree();
     // test_trie();
     // test_math();
-    // test_b_tree();
-    test_shared_ptr();
+    test_b_tree();
+    // test_shared_ptr();
 
     return 0;
 }

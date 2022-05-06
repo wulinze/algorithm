@@ -33,15 +33,14 @@ namespace algorithm::tree{
 
         shared_ptr<btree_node<_Kp, _Vp>> brother(){
             long unsigned int i=0;
-            if(parent == nullptr || parent->keys.size() <= 1)return nullptr;
+            if(parent == nullptr || parent->keys.size() < 1)return nullptr;
             for(; i<parent->keys.size(); i++){
-                cout << this->keys[0] << ',' << parent->keys[i] << endl;
                 if(this->keys[0] < parent->keys[i]){
                     break;
                 }
             }
 
-            return i==parent->keys.size() ? parent->children[i-1] : parent->children[i];
+            return i==parent->keys.size()? parent->children[i-1]: parent->children[i+1];
         }
 
         // when node size bigger than maxSize the node should be splited
@@ -72,14 +71,30 @@ namespace algorithm::tree{
 
         // when key remove happen, the node may need merge
         // merge only happen in leaf node
-        shared_ptr<btree_node<_Kp, _Vp>> merge(shared_ptr<btree_node<_Kp, _Vp>> node){
+        shared_ptr<btree_node<_Kp, _Vp>> merge(shared_ptr<btree_node<_Kp, _Vp>> node, int parentIdx){
             if(!node)return nullptr;
-            if(this->keys.back() < node->keys.back()){
+            cout << this->keys.back() << ',' << node->keys.back() << endl;
+            if(this->keys.empty()){
+                if(node->keys[0] > parent->keys[parentIdx]){
+                    node->keys.insert(node->keys.begin(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
+                    node->vals.insert(node->vals.begin(), parent->vals.begin()+parentIdx, parent->vals.begin()+parentIdx+1);
+                } else {
+                    node->keys.insert(node->keys.end(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
+                    node->vals.insert(node->vals.end(), parent->vals.begin()+parentIdx, parent->vals.begin()+parentIdx+1);
+                }
+                parent->keys.erase(parent->keys.begin()+parentIdx);
+                parent->vals.erase(parent->vals.begin()+parentIdx);
+                return node;
+            } else if(this->keys.back() < node->keys.back()){
+                this->keys.insert(this->keys.end(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
+                this->vals.insert(this->vals.end(), parent->vals.begin()+parentIdx, parent->vals.begin()+parentIdx+1);
+                parent->keys.erase(parent->keys.begin()+parentIdx);
+                parent->vals.erase(parent->vals.begin()+parentIdx);
                 this->keys.insert(this->keys.end(), node->keys.begin(), node->keys.end());
                 this->vals.insert(this->vals.end(), node->vals.begin(), node->vals.end());
                 return this->shared_from_this();
             } else {
-                node->merge(this->shared_from_this());
+                node->merge(this->shared_from_this(), parentIdx);
                 return node;
             }
         }
@@ -125,7 +140,11 @@ namespace algorithm::tree{
         void delKey(const _Kp& key){
             auto iter  = lower_bound(this->keys.begin(), this->keys.end(), key);
             int pos = iter - this->keys.begin();
-
+            if(this->isLeaf){
+                this->keys.erase(iter);
+                this->vals.erase(this->vals.begin() + pos);
+                return;
+            }
             auto child = this->children[pos+1];
             auto pre = this->shared_from_this();
             while(child && !child->isLeaf){
@@ -136,9 +155,29 @@ namespace algorithm::tree{
             }
 
             if(child){
-                child->keys.erase(child->keys.begin());
-                child->vals.erase(child->vals.begin());
+                pre->keys[pos] = child->keys[0];
+                pre->vals[pos] = child->vals[0];
+                auto brother = child->brother();
+                child->delKey(child->keys[0]);
+                if(child->keys.size() < static_cast<long unsigned int>(maxSize/2)) {
+                    if (brother && brother->keys.size() > static_cast<long unsigned int>(maxSize/2)){
+                        child->addKey(pre->keys[pos], pre->vals[pos]);
+                        pre->addKey(brother->keys[0], brother->vals[0]);
+                        pre->keys.erase(pre->keys.begin() + pos);
+                        pre->vals.erase(pre->vals.begin() + pos);
+                        brother->delKey(brother->keys[0]);
+                    } else {
+                        if(pre){
+                            pre->children[pos] = child->merge(brother, pos);
+                            pre->children.erase(pre->children.begin() + pos+1);
+                            if(pre->keys.empty()){
+                                child->parent = nullptr;
+                            }
+                        }
+                    }
+                }
             }
+
         }
 
         btree_node(const int& max_size,
@@ -202,6 +241,9 @@ namespace algorithm::tree{
 
     template<typename _Kp, typename _Vp>
     void b_tree<_Kp, _Vp>::remove(const _Kp& key){
+        if(!root){
+            throw runtime_error("tree is empty");
+        }
         auto p = this->root;
         auto iter = p->keys.begin();
         while(!p->isLeaf){
@@ -221,19 +263,36 @@ namespace algorithm::tree{
 
         if(!p->isLeaf){
             p->delKey(key);
+            if(root->keys.empty())root = root->children[0];
         } else {
             auto brother = p->brother();
             p->keys.erase(iter);
             p->vals.erase(p->vals.begin() + (iter - p->keys.begin()));
-            cout << brother->keys[0] << endl;
+            if(!brother){
+                if(p->keys.empty())root = nullptr;
+                return;
+            }
+            int i;
+            for(i=0; i<p->parent->keys.size(); i++){
+                if(p->parent->keys[i] > brother->keys[0])break;
+            }
+            auto parPos = i-1;
             if(p->keys.size() < static_cast<long unsigned int>(M/2)) {
                 if (brother && brother->keys.size() > static_cast<long unsigned int>(M/2)){
-                    p->addKey(p->parent->keys[0], p->parent->vals[0]);
+                    p->addKey(p->parent->keys[parPos], p->parent->vals[parPos]);
                     p->parent->addKey(brother->keys[0], brother->vals[0]);
-                    p->parent->keys.erase(p->parent->keys.begin());
-                    p->parent->vals.erase(p->parent->vals.begin());
+                    p->parent->keys.erase(p->parent->keys.begin() + parPos);
+                    p->parent->vals.erase(p->parent->vals.begin() + parPos);
+                    brother->delKey(brother->keys[0]);
                 } else {
-                    p->merge(brother);
+                    if(p->parent){
+                        p->parent->children[parPos] = p->merge(brother, parPos);
+                        p->parent->children.erase(p->parent->children.begin() + parPos+1);
+                        if(p->parent->keys.empty()){
+                            p->parent = nullptr;
+                            root = p;
+                        }
+                    }
                 }
             }
         }
@@ -242,6 +301,9 @@ namespace algorithm::tree{
 
     template<typename _Kp, typename _Vp>
     _Vp b_tree<_Kp, _Vp>::find(const _Kp& key){
+        if(!root){
+            throw runtime_error("tree is empty");
+        }
         auto p = this->root;
         while(!p->isLeaf){
             auto iter = lower_bound(p->keys.begin(), p->keys.end(), key);
@@ -263,6 +325,9 @@ namespace algorithm::tree{
     template<typename _Kp, typename _Vp>
     void b_tree<_Kp, _Vp>::level_tranverse(){
         queue<shared_ptr<btree_node<_Kp, _Vp>>> q;
+        if(!root){
+            throw runtime_error("tree is empty");
+        }
 
         q.push(root);
         while(!q.empty()){
@@ -271,6 +336,11 @@ namespace algorithm::tree{
                 auto top = q.front();q.pop();
                 for(long unsigned int j=0; j<top->keys.size(); j++){
                     cout << "keys: " << top->keys[j] << ", vals: " << top->vals[j] << endl; 
+                }
+                if(top->isLeaf){
+                    cout << "leaf node" << endl;
+                } else {
+                    cout << "non-leaf node" << endl;
                 }
 
                 for(long unsigned int j=0; j<top->children.size(); j++){

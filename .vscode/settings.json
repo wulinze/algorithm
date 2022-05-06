@@ -57,6 +57,8 @@
         "set": "cpp",
         "random": "cpp",
         "ratio": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "condition_variable": "cpp",
+        "mutex": "cpp"
     }
 }
