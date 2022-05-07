@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tree/binary_tree.hpp"
 #include "heap/heap.hpp"
 #include "tree/binary_search_tree.hpp"
@@ -7,6 +9,7 @@
 #include "tree/trie.hpp"
 #include "algorithm/math.hpp"
 #include "ptr/shared_ptr.hpp"
+#include <unordered_set>
 
 void test_binary_tree(){
     vector<int> seq;
@@ -122,36 +125,47 @@ void test_rb_tree(){
 
 void test_b_tree(){
     using namespace algorithm::tree;
-    b_tree<int, int> tree(3);
+    b_tree<int, int> tree(7);
+    const int tree_cap = 20;
+    srand(time(0));
+    // insert test
     std::cout << "insert testing" << std::endl;
-    tree.insert(1, 1);
-    // tree.insert(2, 2);
-    // tree.insert(3, 3);
-    // tree.insert(4, 4);
+    for(int i=0; i<tree_cap; i++){
+        int num =  rand() % 100;
+        tree.insert(i, num);
+    }
     std::cout << "insert test pass" << std::endl;
     
+    // tranverse test
     std::cout << "tranverse testing" << endl;
     tree.level_tranverse();
     std::cout << "tranverse test pass" << endl;
 
-
     std::cout << "find testing" << endl;
-    const int times = 4;
+    const int times = 10;
     for(int i=1; i<=times; i++){
-        cout << "keys: "  << i << ", vals:" << tree.find(i) << endl;
+        int key = rand() % tree_cap;
+        cout << "keys: "  << key << ", vals:" << tree.find(key) << endl;
     }
     std::cout << "find test pass" << endl;
 
-    tree.remove(1);
-    cout << "remove 1 success" << endl;
-    // tree.level_tranverse();
-    tree.remove(3);
-    cout << "remove 3 success" << endl;tree.level_tranverse();
-    std::cout << "remove testing" << endl;
-    for(int i=1; i<=times; i++){
-        cout << "keys: "  << i << ", vals:" << tree.find(i) << endl;
+    // remove test
+    const int cap = 30;
+    using std::unordered_set;
+    unordered_set<int> del(cap);
+    for(int i=0; i<cap; i++){
+        del.insert(rand() % tree_cap);
     }
-    std::cout << "remove test pass" << endl;
+    // for(auto&& key : del){
+    //     cout << key << endl;
+    //     tree.remove(key);
+    //     cout << key << " remove success" << endl;
+    //     tree.level_tranverse();
+    // }
+    tree.remove(7);
+    cout << 7 << " remove success" << endl;
+    tree.level_tranverse();
+    // tree.level_tranverse();
 }
 
 void test_trie(){

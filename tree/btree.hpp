@@ -73,7 +73,6 @@ namespace algorithm::tree{
         // merge only happen in leaf node
         shared_ptr<btree_node<_Kp, _Vp>> merge(shared_ptr<btree_node<_Kp, _Vp>> node, int parentIdx){
             if(!node)return nullptr;
-            cout << this->keys.back() << ',' << node->keys.back() << endl;
             if(this->keys.empty()){
                 if(node->keys[0] > parent->keys[parentIdx]){
                     node->keys.insert(node->keys.begin(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
@@ -86,8 +85,13 @@ namespace algorithm::tree{
                 parent->vals.erase(parent->vals.begin()+parentIdx);
                 return node;
             } else if(this->keys.back() < node->keys.back()){
-                this->keys.insert(this->keys.end(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
-                this->vals.insert(this->vals.end(), parent->vals.begin()+parentIdx, parent->vals.begin()+parentIdx+1);
+                if(this->keys[0] > parent->keys[parentIdx]){
+                    this->keys.insert(this->keys.begin(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
+                    this->vals.insert(this->vals.begin(), parent->vals.begin()+parentIdx, parent->vals.begin()+parentIdx+1);
+                } else {
+                    this->keys.insert(this->keys.end(), parent->keys.begin()+parentIdx, parent->keys.begin()+parentIdx+1);
+                    this->vals.insert(this->vals.end(), parent->vals.begin()+parentIdx, parent->vals.begin()+parentIdx+1);
+                }
                 parent->keys.erase(parent->keys.begin()+parentIdx);
                 parent->vals.erase(parent->vals.begin()+parentIdx);
                 this->keys.insert(this->keys.end(), node->keys.begin(), node->keys.end());
@@ -168,6 +172,7 @@ namespace algorithm::tree{
                         brother->delKey(brother->keys[0]);
                     } else {
                         if(pre){
+                            if(pos < pre->children.size()-1)pos+=1;
                             pre->children[pos] = child->merge(brother, pos);
                             pre->children.erase(pre->children.begin() + pos+1);
                             if(pre->keys.empty()){
